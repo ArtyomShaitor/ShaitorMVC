@@ -1,18 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Artyom
- * Date: 13.12.2014
- * Time: 9:26
- */
-
 
 class MainController {
 
-    /**
-     * getTime();
-     * @returns page
-     */
     public function getTime(){
 
         $view = new View("timepage.php", NULL);

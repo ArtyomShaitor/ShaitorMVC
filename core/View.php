@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Artyom
- * Date: 13.12.2014
- * Time: 15:38
- */
-
 
 class View {
     private $pageURL;

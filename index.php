@@ -32,4 +32,7 @@ $action = $controller->$action_name($relation["params"]);
 $view = $action;
 $model = $view->model;
 
-include_once "views/".$view->getPageURL();
+if(file_exists("views/".$view->getPageURL())) include_once "views/".$view->getPageURL();
+else {
+    $Route->toErrorPage(404);
+}

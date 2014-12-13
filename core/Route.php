@@ -9,22 +9,25 @@
 
 class Route {
 
-    private $relationArray = array(
-        "/{number}" => array(
-            "controller" => "MainController",
-            "action"     => "getNumber"
-        ),
-        "/{number}/{string}" => array(
-            "controller" => "MainController",
-            "action"     => "getNumber"
-        ),
-        "/time" => array(
-            "controller" => "MainController",
-            "action"     => "getTime"
-        )
-    );
+//    private $relationArray = array(
+//        "/{number}" => array(
+//            "controller" => "MainController",
+//            "action"     => "getNumber",
+//            "number"     => 1
+//        ),
+//        "/{number}/{string}" => array(
+//            "controller" => "MainController",
+//            "action"     => "getNumber",
+//            "age"        => 1,
+//            "name"       => 2
+//        )
+//    );
 
-    public function __constructor(){
+    private $relationArray = array();
+
+    public function __construct(){
+        $file = file_get_contents("relations.json");
+        $this->relationArray = json_decode($file, true);
 
     }
 
@@ -57,8 +60,10 @@ class Route {
                 $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/";
                 if (preg_match($pregRelationURL, $URL, $match) > 0) {
                     $i = 0;
-                    foreach ($match as $key => $param) {
-                        if ($i != 0) $relation["params"][$i - 1] = $param;
+                    foreach ($v as $key => $param) {
+                        if($i > 1){
+                            $relation["params"][$key] = $match[$param];
+                        }
                         $i++;
                     };
                     $relation["controller"] = $this->relationArray[$k]["controller"];
@@ -75,6 +80,11 @@ class Route {
         } catch (Exception $e){
             echo "Exception : \n -Code:".$e->getCode()."\n Message:".$e->getMessage();
         }
+    }
+
+    public function toErrorPage($code){
+        include_once "errors/".$code.".html";
+        die();
     }
 
 }

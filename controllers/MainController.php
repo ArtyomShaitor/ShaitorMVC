@@ -6,20 +6,32 @@
  * Time: 9:26
  */
 
-require_once "IController.php";
 
-class MainController implements IController {
+class MainController {
 
     /**
      * getTime();
      * @returns page
      */
     public function getTime(){
-        return "timepage.php";
+
+        $view = new View("timepage.php", NULL);
+        return $view;
     }
 
-    public function getNumber(){
-        return "numberpage.php";
+    public function getNumber($params){
+        $model = new Model();
+        $model->setAttribute("number", $params["number"]);
+        $view = new View("test.php",$model);
+        return $view;
+    }
+
+    public function getNumberAndString($params){
+        $model = new Model();
+        $model->setDefAttr("number",$params);
+        $model->setDefAttr("name",$params);
+        $view = new View("test.php", $model);
+        return $view;
     }
 
 } 

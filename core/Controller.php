@@ -3,9 +3,10 @@
  * Created by PhpStorm.
  * User: Artyom
  * Date: 13.12.2014
- * Time: 9:27
+ * Time: 16:38
  */
 
-interface IController {
+
+class Controller {
 
 } 

@@ -3,19 +3,22 @@
  * Created by PhpStorm.
  * User: Artyom
  * Date: 13.12.2014
- * Time: 10:09
- */
-?>
+ * Time: 18:01
+ */ ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>Number Page</title>
+    <title>Test Page</title>
 </head>
 <body>
+    <?
+        $number = $model->getAttribute("number");
+        $name = $model->getAttribute("name");
+        if($name == NULL) $name = "Joey";
+    ?>
 
-    The number is <?=$model->getAttribute("number")?>
-
+    Hello, <?=$name?>! Your number is <?=$number?>
 </body>
 </html>

@@ -10,18 +10,17 @@
 class Route {
 
     private $relationArray = array(
-        "/hello" => array(
+        "/{number}" => array(
             "controller" => "MainController",
-            "action"     => "getTime"
+            "action"     => "getNumber"
+        ),
+        "/{number}/{string}" => array(
+            "controller" => "MainController",
+            "action"     => "getNumber"
         ),
         "/time" => array(
             "controller" => "MainController",
             "action"     => "getTime"
-        ),
-        "/{number}" => array(
-            "controller" => "MainController",
-            "action"     => "getNumber",
-            "number"     => 1
         )
     );
 
@@ -36,37 +35,46 @@ class Route {
      */
     public function requestMap($URL){
 
-        $patterns = array();
-        $replacements = array();
+        try {
+            if (substr($URL, -1) == "/") $URL = substr($URL, 0, strlen($URL) - 1);
 
-        $replacements[0] = "[a-zA-Z]+";
-        $replacements[1] = "(\d+)";
+            $patterns = array();
+            $replacements = array();
 
-        $patterns[0] = "/{string}/";
-        $patterns[1] = "/{number}/";
+            $replacements[0] = "([a-zA-Z]+)";
+            $replacements[1] = "(\d+)";
 
-        $pregRelationURL = "";
+            $patterns[0] = "/{string}/";
+            $patterns[1] = "/{number}/";
 
-        $match = NULL;
+            $pregRelationURL = "";
 
-        foreach($this->relationArray as $k => $v) {
-            $temp_k = str_replace("/", "\/", $k);
-            $pregRelationURL = "/^".preg_replace($patterns, $replacements, $temp_k)."$/";
-                if ( preg_match($pregRelationURL, $URL, $match) > 0 ){
-                    echo $k;
-                    foreach($match as $_k1 => $_v1){
-    //                    echo "$_k1 => $_v1<br>";
-    //                    foreach($_v1 as $_k2 => $_v2) {
-    //                        echo " -- $_k2 => $_v2<br>";
-    //                    }
-                    }
-                break;
+            $relation = NULL;
+            $match = NULL;
+
+            foreach ($this->relationArray as $k => $v) {
+                $temp_k = str_replace("/", "\/", $k);
+                $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/";
+                if (preg_match($pregRelationURL, $URL, $match) > 0) {
+                    $i = 0;
+                    foreach ($match as $key => $param) {
+                        if ($i != 0) $relation["params"][$i - 1] = $param;
+                        $i++;
+                    };
+                    $relation["controller"] = $this->relationArray[$k]["controller"];
+                    $relation["action"] = $this->relationArray[$k]["action"];
+
+                    $relation['errors'] = false;
+                    break;
+                }
             }
+
+            if ($relation == NULL) $relation["errors"] = true;
+
+            return $relation;
+        } catch (Exception $e){
+            echo "Exception : \n -Code:".$e->getCode()."\n Message:".$e->getMessage();
         }
-
-        $relation = NULL;
-
-        return $relation;
     }
 
 }

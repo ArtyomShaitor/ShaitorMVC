@@ -8,19 +8,26 @@ class MainController {
         return $view;
     }
 
-    public function getNumber($params){
+    public function getName($params){
         $model = new Model();
-        $model->setAttribute("number", $params["number"]);
+        $model->setAttribute("name", $params["name"]);
+        $model->setAttribute("title", "Hello!");
+        $model->setAttribute("message", "...");
         $view = new View("test.php",$model);
         return $view;
     }
 
-    public function getNumberAndString($params){
+    public function getNameAndMessage($params){
         $model = new Model();
-        $model->setDefAttr("number",$params);
         $model->setDefAttr("name",$params);
+        $model->setDefAttr("message",$params);
+        $model->setAttribute("title", "Hello, ".$params["name"]);
         $view = new View("test.php", $model);
         return $view;
+    }
+
+    public function adminPage(){
+        $view = new View("admin.php", new Model());
     }
 
 } 

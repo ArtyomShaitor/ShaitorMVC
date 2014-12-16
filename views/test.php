@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title>Test Page</title>
+    <title><?=$model->getAttribute("title")?></title>
 </head>
 <body>
     <?
-        $number = $model->getAttribute("number");
         $name = $model->getAttribute("name");
+        $message = $model->getAttribute("message");
         if($name == NULL) $name = "Joey";
     ?>
 
-    Hello, <?=$name?>! Your number is <?=$number?>
+    Hello, <?=$name?>! Your have a message from anonymous : <?=$message?>
 </body>
 </html>

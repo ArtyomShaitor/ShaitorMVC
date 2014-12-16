@@ -1,18 +1,22 @@
 {
-    "/{number}/{string}" : {
+    "/{value}/{value}" : {
         "controller" : "MainController",
-        "action" : "getNumberAndString",
-        "number" : 1,
-        "name" : 2
+        "action" : "getNameAndMessage",
+        "name" : 1,
+        "message" : 2
     },
 
-    "/{number}" : {
+    "/{value}" : {
         "controller" : "MainController",
-        "action" : "getNumber",
-        "number" : 1
+        "action" : "getName",
+        "name" : 1
     },
     "/time" : {
         "controller" : "MainController",
         "action" : "getTime"
+    },
+    "/admin" : {
+        "controller" : "MainController",
+        "action" : "adminPage"
     }
 }

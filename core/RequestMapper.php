@@ -76,6 +76,11 @@ class RequestMapper {
      */
 
 
+    /**
+     * Удаляет с запроса лишние параметры
+     * @param $request_url исходный запрос
+     * @return string переделанный запрос
+     */
     public function refactorURL($request_url){
         if ($this->cuts == NULL) return $request_url;
         foreach($this->cuts as $k => $v) {
@@ -95,34 +100,39 @@ class RequestMapper {
             $patterns = array();
             $replacements = array();
 
-            $replacements[0] = "([a-zA-Z]+)";
-            $replacements[1] = "(\d+)";
+            $replacements[0] = "([a-zA-Z0-9]+)";
 
-            $patterns[0] = "/{string}/";
-            $patterns[1] = "/{number}/";
+            $patterns[0] = "/{value}/";
 
             $pregRelationURL = "";
             $relation = NULL;
             $match = NULL;
-            foreach ($this->relationArray as $k => $v) {
-                $temp_k = str_replace("/", "\/", $k);
-                $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/";
-                if (preg_match($pregRelationURL, $URL, $match) > 0) {
-                    $i = 0;
-                    foreach ($v as $key => $param) {
-                        if($i > 1){
-                            $relation["params"][$key] = $match[$param];
-                        }
-                        $i++;
-                    };
-                    $relation["controller"] = $this->relationArray[$k]["controller"];
-                    $relation["action"] = $this->relationArray[$k]["action"];
 
-                    $relation['errors'] = false;
-                    break;
+            if($this->relationArray[$URL] != NULL){
+                $relation["controller"] = $this->relationArray[$URL]["controller"];
+                $relation["action"] = $this->relationArray[$URL]["action"];
+                $relation['errors'] = false;
+            }
+            else {
+                foreach ($this->relationArray as $k => $v) {
+                    $temp_k = str_replace("/", "\/", $k);
+                    $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/e";
+                    if (preg_match($pregRelationURL, $URL, $match) > 0) {
+                        $i = 0;
+                        foreach ($v as $key => $param) {
+                            if ($i > 1) {
+                                $relation["params"][$key] = $match[$param];
+                            }
+                            $i++;
+                        };
+                        $relation["controller"] = $this->relationArray[$k]["controller"];
+                        $relation["action"] = $this->relationArray[$k]["action"];
+
+                        $relation['errors'] = false;
+                        break;
+                    }
                 }
             }
-
             if ($relation == NULL) $relation["errors"] = true;
 
             return $relation;

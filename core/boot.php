@@ -38,9 +38,13 @@ if($relation["errors"]){
 
 if(file_exists(CONTROLLERS_FOLDER."/".$controller_name.".php")) include_once CONTROLLERS_FOLDER."/".$controller_name.".php"; else die("Controller class not found");
 
-$controller = new $controller_name();
-$view = $controller->$action_name($relation["params"]);
+try {
+    $controller = new $controller_name();
+    $view = $controller->$action_name($relation["params"]);
+    $model = $view->model;
+}catch(Exception $e){
+    echo "Exception : \n -Code:".$e->getCode()."\n Message:".$e->getMessage();
+}
 
-$model = $view->model;
 
 

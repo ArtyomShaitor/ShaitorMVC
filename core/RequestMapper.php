@@ -2,13 +2,42 @@
 
 require_once "settings.php";
 
-class Route {
+class RequestMapper {
+
+    /**
+     * ------- FIELDS --------------------------------------------------------------------------------------------------
+     */
 
     private $relationArray = array();
+    private $cuts = array();
+
+
+    /**
+     * ------- CONSTRUCTORS ---------------------------------------------------------------------------------------------
+     */
 
     public function __construct(){
         $this->readRelationsFromDir();
     }
+
+
+    /**
+     * ------- GETTERS / SETTERS ---------------------------------------------------------------------------------------
+     */
+
+    public function setCuts($cuts, $request_url){
+        $this->cuts = $cuts;
+
+    }
+
+
+
+
+
+
+    /**
+     * ------- PRIVATE METHODS -----------------------------------------------------------------------------------------
+     */
 
     /**
      * Функция, читающая файлы relations в поле $relationArray
@@ -36,18 +65,31 @@ class Route {
      * @param $URL запрашиваемый адрес
      * @return relation массив
      */
+
+
+
+
+
+
+    /**
+     * ------- PUBLIC METHODS ------------------------------------------------------------------------------------------
+     */
+
+
+    public function refactorURL($request_url){
+        if ($this->cuts == NULL) return $request_url;
+        foreach($this->cuts as $k => $v) {
+            if (strpos($request_url, $v) != NULL) {
+                $pos = strpos($request_url, $v);
+                $request_url = substr($request_url, 0, $pos);
+            }
+        }
+        return $request_url;
+    }
+
     public function requestMap($URL){
 
         try {
-            $cuts = array("?", "/index.php");
-
-            foreach($cuts as $k => $v) {
-                if (strpos($URL, $v) != NULL) {
-                    $pos = strpos($URL, $v);
-                    $URL = substr($URL, 0, $pos);
-                }
-            }
-
             if (substr($URL, -1) == "/") $URL = substr($URL, 0, strlen($URL) - 1);
 
             $patterns = array();
@@ -60,10 +102,8 @@ class Route {
             $patterns[1] = "/{number}/";
 
             $pregRelationURL = "";
-
             $relation = NULL;
             $match = NULL;
-
             foreach ($this->relationArray as $k => $v) {
                 $temp_k = str_replace("/", "\/", $k);
                 $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/";

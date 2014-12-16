@@ -8,7 +8,7 @@
 
 require_once "settings.php";
 
-require_once "Route.php";
+require_once "RequestMapper.php";
 require_once "View.php";
 require_once "Model.php";
 require_once "Controller.php";
@@ -16,12 +16,22 @@ require_once "Controller.php";
 /* --- */
 
 $request_url = $_SERVER['REQUEST_URI'];
-$Route = new Route();
-$relation = $Route->requestMap($request_url);
+
+$requestMapper = new RequestMapper();
+$cuts = array("?", "/index.php");
+
+$requestMapper->setCuts($cuts, $request_url);
+$requestMapper->refactorURL($request_url);
+
+$relation = NULL;
+
+
+
+//$relation = $requestMapper->getRelationsFromURL($request_url);
+$relation = $requestMapper->requestMap($request_url);
 
 if($relation["errors"]){
-    $Route->toErrorPage(404);
-
+    $requestMapper->toErrorPage(404);
 }
 (!empty($relation['controller'])) ? $controller_name = $relation['controller'] : die("Controller name is null");
 (!empty($relation['action'])) ? $action_name = $relation['action'] : die("Action name is null");

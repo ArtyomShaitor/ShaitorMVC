@@ -1,39 +1,53 @@
 <?php
 
-
+require_once "settings.php";
 
 class Route {
-
-//    private $relationArray = array(
-//        "/{number}" => array(
-//            "controller" => "MainController",
-//            "action"     => "getNumber",
-//            "number"     => 1
-//        ),
-//        "/{number}/{string}" => array(
-//            "controller" => "MainController",
-//            "action"     => "getNumber",
-//            "age"        => 1,
-//            "name"       => 2
-//        )
-//    );
 
     private $relationArray = array();
 
     public function __construct(){
-        $file = file_get_contents("relations.json");
-        $this->relationArray = json_decode($file, true);
-
+        $this->readRelationsFromDir();
     }
 
     /**
-     * Функция, возвращающее мне имя контроллера, метода, а также, возможно, параметров.
+     * Функция, читающая файлы relations в поле $relationArray
+     */
+    private function readRelationsFromDir(){
+        $array = array();
+        if( is_dir(RELATIONS_FOLDER) ){
+            $files = glob(RELATIONS_FOLDER."/*.json");
+            if( count($files) == 0 ) die ("There are no any relation files in folder");
+            foreach($files as $k => $v){
+                $file = file_get_contents($v);
+                $array = json_decode($file, true);
+                if (count($array) == 0) {
+                    continue;
+                }
+                foreach($array as $k1 => $v1){
+                    $this->relationArray[$k1] = $v1;
+                }
+            }
+        }else die(RELATIONS_FOLDER." is not a relation folder");
+    }
+
+    /**
+     * Функция, возвращающее имя контроллера, метода, а также параметров.
      * @param $URL запрашиваемый адрес
-     * @return mixed массив
+     * @return relation массив
      */
     public function requestMap($URL){
 
         try {
+            $cuts = array("?", "/index.php");
+
+            foreach($cuts as $k => $v) {
+                if (strpos($URL, $v) != NULL) {
+                    $pos = strpos($URL, $v);
+                    $URL = substr($URL, 0, $pos);
+                }
+            }
+
             if (substr($URL, -1) == "/") $URL = substr($URL, 0, strlen($URL) - 1);
 
             $patterns = array();

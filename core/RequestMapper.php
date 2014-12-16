@@ -61,10 +61,68 @@ class RequestMapper {
     }
 
     /**
-     * Функция, возвращающее имя контроллера, метода, а также параметров.
-     * @param $URL запрашиваемый адрес
-     * @return relation массив
+     * Получает relation object из url'a, содержащего параметры
+     * @var Boolean
+     * @param $URL string URL
+     * @param array $patterns
+     * @param array $replacements
+     * @param object $relation исходный relation object
+     * @return void
      */
+    private function getRelationFromParamsURL($URL, $patterns, $replacements, &$relation)
+    {
+        foreach ($this->relationArray as $k => $v) {
+            $temp_k = str_replace("/", "\/", $k);
+            $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/e";
+            if (preg_match($pregRelationURL, $URL, $match) > 0) {
+                $i = 0;
+                foreach ($v as $key => $param) {
+                    if ($i > 1) {
+                        $relation["params"][$key] = $match[$param];
+                    }
+                    $i++;
+                };
+                $relation["controller"] = $this->relationArray[$k]["controller"];
+                $relation["action"] = $this->relationArray[$k]["action"];
+
+                $relation['errors'] = false;
+                break;
+            }
+        }
+
+    }
+
+    /**
+     * Получает relation object из url'a без параметров
+     * @param $URL string url
+     * @param $relation object relation
+     * @return void
+     */
+    private function getRelationFromURL($URL, &$relation){
+        $relation["controller"] = $this->relationArray[$URL]["controller"];
+        $relation["action"] = $this->relationArray[$URL]["action"];
+        $relation['errors'] = false;
+    }
+
+
+    /**
+     * Рефакторинг URL
+     * @param $request_url исходный запрос
+     * @return string переделанный запрос
+     */
+    private function refactorURL(&$URL){
+        if ($this->cuts == NULL) return $URL;
+        foreach($this->cuts as $k => $v) {
+            if (strpos($URL, $v) != NULL) {
+                $pos = strpos($URL, $v);
+                $URL = substr($URL, 0, $pos);
+            }
+        }
+        if (substr($URL, -1) == "/") $URL = substr($URL, 0, strlen($URL) - 1);
+        $replacements[0] = "([a-zA-Z0-9]+)";
+        $patterns[0] = "/{value}/";
+        return $URL;
+    }
 
 
 
@@ -75,69 +133,30 @@ class RequestMapper {
      * ------- PUBLIC METHODS ------------------------------------------------------------------------------------------
      */
 
-
-    /**
-     * Удаляет с запроса лишние параметры
-     * @param $request_url исходный запрос
-     * @return string переделанный запрос
-     */
-    public function refactorURL($request_url){
-        if ($this->cuts == NULL) return $request_url;
-        foreach($this->cuts as $k => $v) {
-            if (strpos($request_url, $v) != NULL) {
-                $pos = strpos($request_url, $v);
-                $request_url = substr($request_url, 0, $pos);
-            }
-        }
-        return $request_url;
-    }
-
     public function requestMap($URL){
 
         try {
-            if (substr($URL, -1) == "/") $URL = substr($URL, 0, strlen($URL) - 1);
 
             $patterns = array();
             $replacements = array();
 
-            $replacements[0] = "([a-zA-Z0-9]+)";
+            $this->refactorURL($URL);
 
-            $patterns[0] = "/{value}/";
-
-            $pregRelationURL = "";
             $relation = NULL;
             $match = NULL;
 
             if($this->relationArray[$URL] != NULL){
-                $relation["controller"] = $this->relationArray[$URL]["controller"];
-                $relation["action"] = $this->relationArray[$URL]["action"];
-                $relation['errors'] = false;
+                $this->getRelationFromURL($URL, $relation);
             }
             else {
-                foreach ($this->relationArray as $k => $v) {
-                    $temp_k = str_replace("/", "\/", $k);
-                    $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/e";
-                    if (preg_match($pregRelationURL, $URL, $match) > 0) {
-                        $i = 0;
-                        foreach ($v as $key => $param) {
-                            if ($i > 1) {
-                                $relation["params"][$key] = $match[$param];
-                            }
-                            $i++;
-                        };
-                        $relation["controller"] = $this->relationArray[$k]["controller"];
-                        $relation["action"] = $this->relationArray[$k]["action"];
-
-                        $relation['errors'] = false;
-                        break;
-                    }
-                }
+                $this->getRelationFromParamsURL($URL, $patterns, $replacements, $relation);
             }
             if ($relation == NULL) $relation["errors"] = true;
 
             return $relation;
         } catch (Exception $e){
             echo "Exception : \n -Code:".$e->getCode()."\n Message:".$e->getMessage();
+            return false;
         }
     }
 

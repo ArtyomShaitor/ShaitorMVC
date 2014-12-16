@@ -14,6 +14,13 @@ class View {
     public function setParams($params){ $this->params = $params; }
     public function getParams(){ return $this->params; }
 
+    /**
+     * Создание экзмепляра класса
+     * @param $pageURL url представления
+     * @param $model модель
+     * @param null $params параметры
+     * @return View
+     */
     public function __construct($pageURL, $model, $params = NULL){
         $this->pageURL = $pageURL;
         $this->params = $params;

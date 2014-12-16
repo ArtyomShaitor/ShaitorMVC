@@ -15,7 +15,7 @@
         "controller" : "MainController",
         "action" : "getTime"
     },
-    "/admin" : {
+    "*/admin" : {
         "controller" : "MainController",
         "action" : "adminPage"
     }

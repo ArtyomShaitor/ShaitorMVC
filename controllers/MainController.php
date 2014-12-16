@@ -1,6 +1,10 @@
 <?php
 
-class MainController {
+require_once "core/Controller.php";
+require_once "core/View.php";
+require_once "core/Model.php";
+
+class MainController extends Controller{
 
     public function getTime(){
 

@@ -31,7 +31,7 @@ class MainController extends Controller{
     }
 
     public function adminPage(){
-        $view = new View("admin.php", new Model());
+        return new View("admin.php", new Model());
     }
 
 } 

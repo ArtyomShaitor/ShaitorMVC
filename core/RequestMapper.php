@@ -57,7 +57,19 @@ class RequestMapper {
                     $this->relationArray[$k1] = $v1;
                 }
             }
+
         }else die(RELATIONS_FOLDER." is not a relation folder");
+    }
+
+
+    private function selectAllKeysByPattern($pattern){
+        $array = array();
+        foreach($this->relationArray as $k => $v){
+            if( strpos($k, $pattern) === 0 ) {
+                $array[$k] = $v;
+            }
+        }
+        return $array;
     }
 
     /**
@@ -69,25 +81,53 @@ class RequestMapper {
      * @param object $relation исходный relation object
      * @return void
      */
-    private function getRelationFromParamsURL($URL, $patterns, $replacements, &$relation)
+    private function getRelationFromParamsURL($URL, &$patterns, &$replacements, &$relation)
     {
-        foreach ($this->relationArray as $k => $v) {
-            $temp_k = str_replace("/", "\/", $k);
-            $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/e";
-            if (preg_match($pregRelationURL, $URL, $match) > 0) {
-                $i = 0;
-                foreach ($v as $key => $param) {
-                    if ($i > 1) {
-                        $relation["params"][$key] = $match[$param];
-                    }
-                    $i++;
-                };
-                $relation["controller"] = $this->relationArray[$k]["controller"];
-                $relation["action"] = $this->relationArray[$k]["action"];
-
-                $relation['errors'] = false;
-                break;
+        $array = $this->selectAllKeysByPattern("*");
+        if(count($array) > 0) {
+            foreach ($array as $k => $v) {
+                $temp_k = str_replace("*", "", $k);
+                $URL_length = strlen($URL);
+                $tail_length = strlen($temp_k);
+                if (strpos($URL, $temp_k) == $URL_length - $tail_length) {
+                    $relation["controller"] = $this->relationArray[$k]["controller"];
+                    $relation["action"] = $this->relationArray[$k]["action"];
+                    $relation['errors'] = false;
+                    break;
+                }
             }
+        }else
+        foreach ($this->relationArray as $k => $v) {
+            if(strpos($k, "*") != NULL){
+                $temp_k = str_replace("*", "",$k);
+                $URL_length = strlen($URL);
+                $tail_length = strlen($temp_k);
+                if(strpos($URL, $temp_k) == $URL_length - $tail_length){
+                    $relation["controller"] = $this->relationArray[$k]["controller"];
+                    $relation["action"] = $this->relationArray[$k]["action"];
+
+                    $relation['errors'] = false;
+                    break;
+                }
+            }else {
+                $temp_k = str_replace("/", "\/", $k);
+                $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/";
+                if (preg_match($pregRelationURL, $URL, $match) > 0) {
+                    $i = 0;
+                    foreach ($v as $key => $param) {
+                        if ($i > 1) {
+                            $relation["params"][$key] = $match[$param];
+                        }
+                        $i++;
+                    };
+                    $relation["controller"] = $this->relationArray[$k]["controller"];
+                    $relation["action"] = $this->relationArray[$k]["action"];
+
+                    $relation['errors'] = false;
+                    break;
+                }
+            }
+
         }
 
     }
@@ -110,7 +150,7 @@ class RequestMapper {
      * @param $request_url исходный запрос
      * @return string переделанный запрос
      */
-    private function refactorURL(&$URL){
+    private function refactorURL(&$URL, &$patterns, &$replacements){
         if ($this->cuts == NULL) return $URL;
         foreach($this->cuts as $k => $v) {
             if (strpos($URL, $v) != NULL) {
@@ -134,13 +174,11 @@ class RequestMapper {
      */
 
     public function requestMap($URL){
-
         try {
-
             $patterns = array();
             $replacements = array();
 
-            $this->refactorURL($URL);
+            $this->refactorURL($URL, $patterns, $replacements);
 
             $relation = NULL;
             $match = NULL;

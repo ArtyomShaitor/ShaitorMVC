@@ -1,10 +1,13 @@
 <?php
 
-require_once "core/Controller.php";
-require_once "core/View.php";
-require_once "core/Model.php";
+require_once "core/MVCClasses/IController.php";
+require_once "core/MVCClasses/View.php";
+require_once "core/MVCClasses/Model.php";
+require_once "core/DataBase/MySQL.php";
 
-class MainController extends Controller{
+class MainController implements  IController{
+
+    private $database;
 
     public function getTime(){
 
@@ -34,4 +37,9 @@ class MainController extends Controller{
         return new View("admin.php", new Model());
     }
 
-} 
+    public function __construct()
+    {
+        $this->database = new MySQL();
+        
+    }
+}

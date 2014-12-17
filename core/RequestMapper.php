@@ -84,6 +84,7 @@ class RequestMapper {
     private function getRelationFromParamsURL($URL, &$patterns, &$replacements, &$relation)
     {
         $array = $this->selectAllKeysByPattern("*");
+        $flag = false;
         if(count($array) > 0) {
             foreach ($array as $k => $v) {
                 $temp_k = str_replace("*", "", $k);
@@ -93,41 +94,44 @@ class RequestMapper {
                     $relation["controller"] = $this->relationArray[$k]["controller"];
                     $relation["action"] = $this->relationArray[$k]["action"];
                     $relation['errors'] = false;
+                    $flag = true;
                     break;
                 }
             }
-        }else
-        foreach ($this->relationArray as $k => $v) {
-            if(strpos($k, "*") != NULL){
-                $temp_k = str_replace("*", "",$k);
-                $URL_length = strlen($URL);
-                $tail_length = strlen($temp_k);
-                if(strpos($URL, $temp_k) == $URL_length - $tail_length){
-                    $relation["controller"] = $this->relationArray[$k]["controller"];
-                    $relation["action"] = $this->relationArray[$k]["action"];
+        }
+        if(!$flag) {
+            foreach ($this->relationArray as $k => $v) {
+                if (strpos($k, "*") != NULL) {
+                    $temp_k = str_replace("*", "", $k);
+                    $URL_length = strlen($URL);
+                    $tail_length = strlen($temp_k);
+                    if (strpos($URL, $temp_k) == $URL_length - $tail_length) {
+                        $relation["controller"] = $this->relationArray[$k]["controller"];
+                        $relation["action"] = $this->relationArray[$k]["action"];
 
-                    $relation['errors'] = false;
-                    break;
-                }
-            }else {
-                $temp_k = str_replace("/", "\/", $k);
-                $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/";
-                if (preg_match($pregRelationURL, $URL, $match) > 0) {
-                    $i = 0;
-                    foreach ($v as $key => $param) {
-                        if ($i > 1) {
-                            $relation["params"][$key] = $match[$param];
-                        }
-                        $i++;
-                    };
-                    $relation["controller"] = $this->relationArray[$k]["controller"];
-                    $relation["action"] = $this->relationArray[$k]["action"];
+                        $relation['errors'] = false;
+                        break;
+                    }
+                } else {
+                    $temp_k = str_replace("/", "\/", $k);
+                    $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/";
+                    if (preg_match($pregRelationURL, $URL, $match) > 0) {
+                        $i = 0;
+                        foreach ($v as $key => $param) {
+                            if ($i > 1) {
+                                $relation["params"][$key] = $match[$param];
+                            }
+                            $i++;
+                        };
+                        $relation["controller"] = $this->relationArray[$k]["controller"];
+                        $relation["action"] = $this->relationArray[$k]["action"];
 
-                    $relation['errors'] = false;
-                    break;
+                        $relation['errors'] = false;
+                        break;
+                    }
                 }
+
             }
-
         }
 
     }
@@ -182,7 +186,6 @@ class RequestMapper {
 
             $relation = NULL;
             $match = NULL;
-
             if($this->relationArray[$URL] != NULL){
                 $this->getRelationFromURL($URL, $relation);
             }
@@ -190,7 +193,6 @@ class RequestMapper {
                 $this->getRelationFromParamsURL($URL, $patterns, $replacements, $relation);
             }
             if ($relation == NULL) $relation["errors"] = true;
-
             return $relation;
         } catch (Exception $e){
             echo "Exception : \n -Code:".$e->getCode()."\n Message:".$e->getMessage();

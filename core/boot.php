@@ -9,9 +9,9 @@
 require_once "settings.php";
 
 require_once "RequestMapper.php";
-require_once "View.php";
-require_once "Model.php";
-require_once "Controller.php";
+require_once "MVCClasses/View.php";
+require_once "MVCClasses/Model.php";
+require_once "MVCClasses/IController.php";
 
 /* --- */
 

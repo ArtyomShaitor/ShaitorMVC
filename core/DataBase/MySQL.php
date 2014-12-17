@@ -22,6 +22,19 @@ class MySQL implements IDataBase{
 
     public function connect($host, $login, $password, $db_name)
     {
+//        $xml = simplexml_load_file("core/DataBase/database-settings/settings.xml");
+//        $json = json_encode($xml);
+//        $array = json_decode($json,TRUE);
+//        $host = $array['host'];
+//        $login = $array['login'];
+//        $password = $array['password'];
+//        foreach($array as $k => $v){
+//            echo "$k => $v<br>";
+//            foreach($v as $k1 => $v1 ){
+//                echo " - $k1 => $v1<br>";
+//            }
+//        }
+        /*
         if($this->mysql_server = mysql_connect($host, $login, $password)){
             if($this->db = mysql_select_db($db_name, $this->mysql_server)){
                 $this->setStatus(true, "You have been conntected to MySQL database!");
@@ -32,7 +45,7 @@ class MySQL implements IDataBase{
         }
         else{
             $this->setStatus(false, "You haven't been connected to MySQL database.\n Error : there is no database with these host, login and password\n");
-        }
+        }*/
 
     }
 

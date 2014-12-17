@@ -40,6 +40,7 @@ class MainController implements  IController{
     public function __construct()
     {
         $this->database = new MySQL();
-
+        $this->database->connect("localhost", "root", "", "shaitormvc_db");
+//        echo $this->database->getStatus();
     }
 }

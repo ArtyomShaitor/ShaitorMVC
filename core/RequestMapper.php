@@ -90,7 +90,7 @@ class RequestMapper {
                 $temp_k = str_replace("*", "", $k);
                 $URL_length = strlen($URL);
                 $tail_length = strlen($temp_k);
-                if (strpos($URL, $temp_k) == $URL_length - $tail_length) {
+                if (strpos($URL, $temp_k) == $URL_length - $tail_length && gettype(strpos($URL, $temp_k))== "integer" ) {
                     $relation["controller"] = $this->relationArray[$k]["controller"];
                     $relation["action"] = $this->relationArray[$k]["action"];
                     $relation['errors'] = false;

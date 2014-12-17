@@ -18,7 +18,7 @@ require_once "MVCClasses/IController.php";
 $request_url = $_SERVER['REQUEST_URI'];
 
 $requestMapper = new RequestMapper();
-$cuts = array("?", "/index.php");
+$cuts = array("?", "/index.php", "/index.html", "/index.htm");
 
 $requestMapper->setCuts($cuts, $request_url);
 

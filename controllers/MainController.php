@@ -40,6 +40,6 @@ class MainController implements  IController{
     public function __construct()
     {
         $this->database = new MySQL();
-        
+
     }
 }

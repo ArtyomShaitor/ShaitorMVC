@@ -1,5 +1,5 @@
 <params>
-    <host>localhost</host>
-    <login>root</login>
-    <password></password>
+    <param name="host">localhost</param>
+    <param name="login">root</param>
+    <param name="password"></param>
 </params>

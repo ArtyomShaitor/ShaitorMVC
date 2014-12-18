@@ -7,6 +7,7 @@
  */
 
 require_once "IDataBase.php";
+require_once "core/DataBase/Entity.php";
 
 class MySQL implements IDataBase{
 
@@ -20,21 +21,16 @@ class MySQL implements IDataBase{
         $this->status_message = $status_message;
     }
 
-    public function connect($host, $login, $password, $db_name)
+    public function connect($db_name)
     {
-//        $xml = simplexml_load_file("core/DataBase/database-settings/settings.xml");
-//        $json = json_encode($xml);
-//        $array = json_decode($json,TRUE);
-//        $host = $array['host'];
-//        $login = $array['login'];
-//        $password = $array['password'];
-//        foreach($array as $k => $v){
-//            echo "$k => $v<br>";
-//            foreach($v as $k1 => $v1 ){
-//                echo " - $k1 => $v1<br>";
-//            }
-//        }
-        /*
+        $xml = simplexml_load_file("core/DataBase/database-settings/settings.xml");
+        $json = json_encode($xml);
+        $array = json_decode($json,true);
+        $host = $array["param"][0];
+        $login = $array["param"][1];
+        $password = $array["param"][2];
+        if (gettype($password) == "array") $password = "";
+
         if($this->mysql_server = mysql_connect($host, $login, $password)){
             if($this->db = mysql_select_db($db_name, $this->mysql_server)){
                 $this->setStatus(true, "You have been conntected to MySQL database!");
@@ -45,7 +41,7 @@ class MySQL implements IDataBase{
         }
         else{
             $this->setStatus(false, "You haven't been connected to MySQL database.\n Error : there is no database with these host, login and password\n");
-        }*/
+        }
 
     }
 
@@ -59,9 +55,51 @@ class MySQL implements IDataBase{
         return $this->status_message;
     }
 
-    public function save($entry)
+    public function save(Entity $entry)
     {
-        // TODO: Implement save() method.
+        $classname = get_class($entry);
+        $array = (array) $entry;
+        foreach($array as $k => $v){
+            if (getType($v)=="string") {
+                $array[$k] = "'".$v."'";
+            }
+            if ($v == NULL) {
+                $v = "''";
+                $array[$k] = $v;
+            };
+            $k = str_replace($classname, "", $k);
+        }
+
+        $arrayString =  implode(",", $array);
+
+        $query = "INSERT INTO `$classname` VALUES($arrayString)";
+        mysql_query($query);
+    }
+
+    public function remove(Entity $entry){
+        $classname = get_class($entry);
+        $id = $entry->getPrimaryKey();
+
+        $query = "DESCRIBE `$classname`";
+        $query = mysql_query($query);
+        $PKname = NULL;
+        foreach($row = mysql_fetch_assoc($query) as $k => $v){
+            if($row["Key"] == "PRI"){
+                $PKname = $row['Field'];
+                break;
+            }
+        }
+
+        $query = "DELETE FROM `$classname` WHERE `$PKname`='$id'";
+        mysql_query($query);
+    }
+
+    public function update(Entity $entry)
+    {
+//        $entry =
+        echo Entity::$childrenList[0];
+        
+        // TODO: Implement update() method.
     }
 
     public function __construct()
@@ -69,4 +107,5 @@ class MySQL implements IDataBase{
         $this->setStatus(false, "You not connected to database!\n");
         // TODO: Implement __construct() method.
     }
+
 }

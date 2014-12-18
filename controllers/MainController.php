@@ -5,15 +5,21 @@ require_once "core/MVCClasses/View.php";
 require_once "core/MVCClasses/Model.php";
 require_once "core/DataBase/MySQL.php";
 
+require_once "models/src/Person.php";
+
 class MainController implements  IController{
 
     private $database;
+
+
 
     public function getTime(){
 
         $view = new View("timepage.php", NULL);
         return $view;
     }
+
+
 
     public function getName($params){
         $model = new Model();
@@ -24,6 +30,8 @@ class MainController implements  IController{
         return $view;
     }
 
+
+
     public function getNameAndMessage($params){
         $model = new Model();
         $model->setDefAttr("name",$params);
@@ -33,14 +41,21 @@ class MainController implements  IController{
         return $view;
     }
 
+
+
     public function adminPage(){
         return new View("admin.php", new Model());
     }
 
+
+
     public function __construct()
     {
         $this->database = new MySQL();
-        $this->database->connect("localhost", "root", "", "shaitormvc_db");
-//        echo $this->database->getStatus();
+        $this->database->connect("shaitormvc_db");
+        $person = new Person("Artyom", "Shaitor");
+        $this->database->update($person);
     }
+
+
 }

@@ -96,9 +96,38 @@ class MySQL implements IDataBase{
 
     public function update(Entity $entry)
     {
-//        $entry =
-        echo Entity::$childrenList[0];
-        
+        $id = $entry->getPrimaryKey();
+        $classname = get_class($entry);
+        $array = (array) $entry;
+        foreach($array as $k => $v){
+//            if (getType($v)=="string") {
+                $v = "'".$v."'";
+//            }
+            if ($v === NULL) {
+                $v = "''";
+            };
+
+            unset($array[$k]);
+            $k = str_replace($classname, "", $k);
+            $array[$k] = "`".$k."`=".$v;
+        }
+
+        $query = "DESCRIBE `$classname`";
+        $query = mysql_query($query);
+        $PKname = NULL;
+        foreach($row = mysql_fetch_assoc($query) as $k => $v){
+            if($row["Key"] == "PRI"){
+                $PKname = $row['Field'];
+                break;
+            }
+        }
+
+        $arrayString =  implode(",", $array);
+        if( $id !== NULL ){
+            $q = "UPDATE `$classname` SET $arrayString WHERE `$PKname`='$id'";
+            echo mysql_query($q);
+        }else die("There is no amy entity with this id");
+
         // TODO: Implement update() method.
     }
 

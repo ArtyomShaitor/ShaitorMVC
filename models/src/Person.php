@@ -14,12 +14,11 @@ class Person extends Entity{
     private $name;
     private $surname;
 
-//    public function __construct($name = NULL, $surname = NULL){
-//        $this->id = NULL;
-//        $this->name = $name;
-//        $this->surname = $surname;
-//        $this->follow();
-//    }
+    public function __construct($name = NULL, $surname = NULL){
+        $this->id = NULL;
+        $this->name = $name;
+        $this->surname = $surname;
+    }
 
     public function getId(){return $this->id;}
     public function getName(){return $this->name;}
@@ -35,7 +34,4 @@ class Person extends Entity{
         return $this->id;
     }
 
-    public function mainConstructor()
-    {
-    }
 }

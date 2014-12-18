@@ -54,6 +54,8 @@ class MainController implements  IController{
         $this->database = new MySQL();
         $this->database->connect("shaitormvc_db");
         $person = new Person("Artyom", "Shaitor");
+        $person->setId(5);
+//        $person->setName("Artyom");
         $this->database->update($person);
     }
 

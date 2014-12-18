@@ -9,6 +9,7 @@
 abstract class Entity {
     public static $childrenList = array();
     abstract public function getPrimaryKey();
+    /*
     abstract public function mainConstructor();
     public function __construct(){
         $this->mainConstructor();
@@ -17,6 +18,6 @@ abstract class Entity {
     protected  function follow()
     {
         Entity::$childrenList[] = get_class($this);
-    }
+    }*/
 
 }

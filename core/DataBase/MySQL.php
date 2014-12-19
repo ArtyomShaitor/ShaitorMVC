@@ -23,24 +23,26 @@ class MySQL implements IDataBase{
 
     public function connect($db_name)
     {
-        $xml = simplexml_load_file("core/DataBase/database-settings/settings.xml");
-        $json = json_encode($xml);
-        $array = json_decode($json,true);
-        $host = $array["param"][0];
-        $login = $array["param"][1];
-        $password = $array["param"][2];
-        if (gettype($password) == "array") $password = "";
+        try {
+            $xml = simplexml_load_file("core/DataBase/database-settings/settings.xml");
+            $json = json_encode($xml);
+            $array = json_decode($json, true);
+            $host = $array["param"][0];
+            $login = $array["param"][1];
+            $password = $array["param"][2];
+            if (gettype($password) == "array") $password = "";
 
-        if($this->mysql_server = mysql_connect($host, $login, $password)){
-            if($this->db = mysql_select_db($db_name, $this->mysql_server)){
-                $this->setStatus(true, "You have been conntected to MySQL database!");
+            if ($this->mysql_server = mysql_connect($host, $login, $password)) {
+                if ($this->db = mysql_select_db($db_name, $this->mysql_server)) {
+                    $this->setStatus(true, "You have been conntected to MySQL database!");
+                } else {
+                    $this->setStatus(false, "You haven't been connected to MySQL database.\n Error : there is no database with this name\n");
+                }
+            } else {
+                $this->setStatus(false, "You haven't been connected to MySQL database.\n Error : there is no database with these host, login and password\n");
             }
-            else{
-                $this->setStatus(false, "You haven't been connected to MySQL database.\n Error : there is no database with this name\n");
-            }
-        }
-        else{
-            $this->setStatus(false, "You haven't been connected to MySQL database.\n Error : there is no database with these host, login and password\n");
+        }catch(Exception $e){
+            die($e->getMessage());
         }
 
     }

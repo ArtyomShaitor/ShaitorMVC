@@ -119,7 +119,8 @@ class RequestMapper {
                         $i = 0;
                         foreach ($v as $key => $param) {
                             if ($i > 1) {
-                                $relation["params"][$key] = $match[$param];
+                                $value = urldecode($match[$param]);
+                                $relation["params"][$key] = $value;
                             }
                             $i++;
                         };
@@ -162,8 +163,8 @@ class RequestMapper {
                 $URL = substr($URL, 0, $pos);
             }
         }
-        if (substr($URL, -1) == "/") $URL = substr($URL, 0, strlen($URL) - 1);
-        $replacements[0] = "([a-zA-Z0-9]+)";
+        if (substr($URL, -1) == "/" && strlen($URL) != 1) $URL = substr($URL, 0, strlen($URL) - 1);
+        $replacements[0] = "([a-zA-Z0-9,%.!:;'\"#]+)";
         $patterns[0] = "/{value}/";
         return $URL;
     }

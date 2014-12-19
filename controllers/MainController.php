@@ -11,10 +11,11 @@ class MainController implements  IController{
 
     private $database;
 
-
+    public function getMainPage(){
+        return new View("main.html", new Model());
+    }
 
     public function getTime(){
-
         $view = new View("timepage.php", NULL);
         return $view;
     }
@@ -51,12 +52,12 @@ class MainController implements  IController{
 
     public function __construct()
     {
-        $this->database = new MySQL();
-        $this->database->connect("shaitormvc_db");
-        $person = new Person("Artyom", "Shaitor");
-        $person->setId(5);
+//        $this->database = new MySQL();
+//        $this->database->connect("shaitormvc_db");
+//        $person = new Person("Artyom", "Shaitor");
+//        $person->setId(5);
 //        $person->setName("Artyom");
-        $this->database->update($person);
+//        $this->database->update($person);
     }
 
 

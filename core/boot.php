@@ -21,7 +21,6 @@ $requestMapper = new RequestMapper();
 $cuts = array("?", "/index.php", "/index.html", "/index.htm");
 
 $requestMapper->setCuts($cuts, $request_url);
-
 $relation = $requestMapper->requestMap($request_url);
 
 if($relation["errors"]){

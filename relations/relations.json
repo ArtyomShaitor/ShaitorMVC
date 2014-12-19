@@ -1,4 +1,8 @@
 {
+    "/" : {
+        "controller" : "MainController",
+        "action" : "getMainPage"
+    },
     "/{value}/{value}" : {
         "controller" : "MainController",
         "action" : "getNameAndMessage",

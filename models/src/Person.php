@@ -6,7 +6,7 @@
  * Time: 11:48
  */
 
-require_once "core/DataBase/Entity.php";
+require_once "core/DataBase/system/Entity.php";
 
 
 class Person extends Entity{

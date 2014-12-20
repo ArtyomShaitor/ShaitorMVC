@@ -6,8 +6,8 @@
  * Time: 9:06
  */
 
-require_once "IDataBase.php";
-require_once "core/DataBase/Entity.php";
+require_once "system/IDataBase.php";
+require_once "system/Entity.php";
 
 class MySQL implements IDataBase{
 

@@ -7,7 +7,7 @@
  */
 
 require_once"core/DataBase/MySQL.php";
-require_once "core/DataBase/IDataBase.php";
+require_once "core/DataBase/system/IDataBase.php";
 
 abstract class Entity {
     public static $childrenList = array();

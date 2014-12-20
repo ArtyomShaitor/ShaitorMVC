@@ -1,9 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Artyom
- * Date: 13.12.2014
- * Time: 8:47
- */
 
-echo "hello!";
+require_once "core/boot.php";
+
+
+if(file_exists("views/".$view->getPageURL())) include_once "views/".$view->getPageURL();
+else {
+    $requestMapper->toErrorPage(404);
+}

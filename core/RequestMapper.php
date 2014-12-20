@@ -27,7 +27,6 @@ class RequestMapper {
 
     public function setCuts($cuts, $request_url){
         $this->cuts = $cuts;
-
     }
 
 
@@ -61,7 +60,11 @@ class RequestMapper {
         }else die(RELATIONS_FOLDER." is not a relation folder");
     }
 
-
+    /**
+     * Возвращает массив, в котором ключи все элементов удовлетворяют шаблону
+     * @param string $pattern шаблон
+     * @return array массив
+     */
     private function selectAllKeysByPattern($pattern){
         $array = array();
         foreach($this->relationArray as $k => $v){

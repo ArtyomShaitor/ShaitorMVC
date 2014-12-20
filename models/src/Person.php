@@ -8,6 +8,7 @@
 
 require_once "core/DataBase/Entity.php";
 
+
 class Person extends Entity{
 
     private $id;
@@ -24,7 +25,7 @@ class Person extends Entity{
     public function getName(){return $this->name;}
     public function getSurname(){return $this->surname;}
 
-    public function setId($id){ $this->id = $id; }
+    private function setId($id){ $this->id = $id; }
     public function setName($name){ $this->name = $name; }
     public function setSurname($surname){ $this->surname = $surname; }
 
@@ -32,6 +33,17 @@ class Person extends Entity{
     public function getPrimaryKey()
     {
         return $this->id;
+    }
+
+
+    static public function getInstance($vars)
+    {
+        $id = $vars["id"];
+        $name = $vars["name"];
+        $surname = $vars["surname"];
+        $obj = new Person($name, $surname);
+        $obj->setId($id);
+        return $obj;
     }
 
 }

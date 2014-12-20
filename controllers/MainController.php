@@ -52,12 +52,12 @@ class MainController implements  IController{
 
     public function __construct()
     {
-//        $this->database = new MySQL();
-//        $this->database->connect("shaitormvc_db");
-//        $person = new Person("Artyom", "Shaitor");
-//        $person->setId(5);
-//        $person->setName("Artyom");
-//        $this->database->update($person);
+        $this->database = new MySQL();
+        $this->database->connect("shaitormvc_db");
+
+        $list = $this->database->getListOfEntries("Person");
+        echo $list[1]->getName();
+
     }
 
 

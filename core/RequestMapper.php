@@ -100,6 +100,7 @@ class RequestMapper {
             }
         }
         if(!$flag) {
+
             foreach ($this->relationArray as $k => $v) {
                 if (strpos($k, "*") != NULL) {
                     $temp_k = str_replace("*", "", $k);
@@ -115,24 +116,32 @@ class RequestMapper {
                 } else {
                     $temp_k = str_replace("/", "\/", $k);
                     $pregRelationURL = "/^" . preg_replace($patterns, $replacements, $temp_k) . "$/";
-                    if (preg_match($pregRelationURL, $URL, $match) > 0) {
-                        $i = 0;
-                        foreach ($v as $key => $param) {
-                            if ($i > 1) {
-                                $value = urldecode($match[$param]);
-                                $relation["params"][$key] = $value;
-                            }
-                            $i++;
-                        };
-                        $relation["controller"] = $this->relationArray[$k]["controller"];
-                        $relation["action"] = $this->relationArray[$k]["action"];
+                    try {
 
-                        $relation['errors'] = false;
-                        break;
+                        if (preg_match($pregRelationURL, $URL, $match) > 0)  {
+                            $i = 0;
+                            foreach ($v as $key => $param) {
+                                if ($i > 1) {
+                                    $value = urldecode($match[$param]);
+                                    $relation["params"][$key] = $value;
+                                }
+                                $i++;
+                            };
+                            $relation["controller"] = $this->relationArray[$k]["controller"];
+                            $relation["action"] = $this->relationArray[$k]["action"];
+
+                            $relation['errors'] = false;
+                            break;
+                        }
+                        else throw new Exception("There is no mapper for this url");
+                    }catch(Exception $e){
+                        echo "Exception : ".$e->getMessage();
+                        die();
                     }
                 }
 
             }
+
         }
 
     }
